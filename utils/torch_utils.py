@@ -1,5 +1,6 @@
 # YOLOR PyTorch utils
 
+import sys
 import datetime
 import logging
 import math
@@ -53,6 +54,13 @@ def date_modified(path=__file__):
 
 def git_describe(path=Path(__file__).parent):  # path must be a directory
     # return human-readable git description, i.e. v5.0-5-g3e25f1e https://git-scm.com/docs/git-describe
+
+    # check if running inside pyinstaller bundle
+    # __file__ is set to sys._MEIPASS + 'utils.torchutils' but in the bundle 
+    # this path is unavailable
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        path = sys._MEIPASS
+
     s = f'git -C {path} describe --tags --long --always'
     try:
         return subprocess.check_output(s, shell=True, stderr=subprocess.STDOUT).decode()[:-1]
