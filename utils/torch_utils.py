@@ -48,6 +48,13 @@ def init_torch_seeds(seed=0):
 
 def date_modified(path=__file__):
     # return human-readable file modification date, i.e. '2021-3-26'
+
+    # check if running inside pyinstaller bundle
+    # __file__ is set to sys._MEIPASS + 'utils.torchutils' but in the bundle 
+    # this path is unavailable
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        path = sys._MEIPASS
+
     t = datetime.datetime.fromtimestamp(Path(path).stat().st_mtime)
     return f'{t.year}-{t.month}-{t.day}'
 
